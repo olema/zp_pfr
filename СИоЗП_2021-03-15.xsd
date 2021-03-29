@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema version="2.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns="http://пф.рф/СИоЗП/2021-03-15" xmlns:УТ2="http://пф.рф/УТ/2017-08-21" xmlns:АФ5="http://пф.рф/АФ/2018-12-07"
+	targetNamespace="http://пф.рф/СИоЗП/2021-03-15">
+
+	<xs:import namespace="http://пф.рф/УТ/2017-08-21" schemaLocation="../../УнифТипы_2017-08-21.xsd"/>
+	<xs:import namespace="http://пф.рф/АФ/2018-12-07" schemaLocation="../../ТипыАФ_2018-12-07.xsd"/>	
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../xmldsig_core_schema.xsd"/>
+	
+	<xs:annotation>
+		<xs:documentation>Форма сбора информации о заработной плате работников государственных и муниципальных учреждений</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="ЭДПФР">
+		<xs:annotation>
+			<xs:documentation>Корневой элемент. Электронный документ СИоЗП (Форма сбора информации о заработной плате работников государственных и муниципальных учреждений). Содержит сведения самого документа и служебную информацию об электронном документе.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="СИоЗП">
+					<xs:annotation>
+						<xs:documentation>Форма сбора информации о заработной плате работников государственных и муниципальных учреждений</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Организация">
+								<xs:annotation>
+									<xs:documentation>Сведения об организации, представляющей сведения</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="УТ2:ИНН">
+											<xs:annotation>
+												<xs:documentation>ИНН организации</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element ref="УТ2:КПП">
+											<xs:annotation>
+												<xs:documentation>КПП организации</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="ОКФС">
+											<xs:annotation>
+												<xs:documentation>Код ОКФС. Возможные варианты: "12", "13", "14"</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="2"/>
+													<xs:pattern value="\d{2}"/>
+													<xs:enumeration value="12"/>
+													<xs:enumeration value="13"/>
+													<xs:enumeration value="14"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="КТО">
+											<xs:annotation>
+												<xs:documentation>Код типа организации (в соответствии с указаниями по заполнению форм федерального статистического наблюдения, приказ Росстата от 24.07.2020 № 412)). См. Справочник кодов типа организации</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="3"/>
+													<xs:maxLength value="6"/>
+													<xs:pattern value="\d+(\.\d+)*"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ОКОГУ">
+											<xs:annotation>
+												<xs:documentation>Код ОКОГУ</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="7"/>
+													<xs:pattern value="\d{7}"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="СЗП">
+								<xs:annotation>
+									<xs:documentation>Раздел 1 «Сведения о заработной плате работника»</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Период" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Сведения о заработной плате работника за один отчетный период (месяц и год)</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ОтчетныйПериод">
+														<xs:annotation>
+															<xs:documentation>Отчетный период</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Год" type="xs:gYear">
+																	<xs:annotation>
+																		<xs:documentation>Календарный год, за который выгружается отчет</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="Месяц" type="УТ2:ТипМесяц">
+																	<xs:annotation>
+																		<xs:documentation>Месяц, за который предоставляются сведения о начисленной заработной плате</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Работник" maxOccurs="unbounded"> 
+														<xs:annotation>
+															<xs:documentation>Сведения об одном работнике, сведения о заработной плате которого предоставляются в Форме. Данные заполняются для каждого физического лица - номера СНИЛС, работавшего в отчетном месяце, за который предоставляются данные, независимо от того, работает ли работник на момент сдачи отчета. Данные предоставляются для каждой занимаемой должности данным физическим лицом отдельно, при этом номер СНИЛС повторяется в каждой строке. Например, если физическое лицо занимает 1 ставку по одной должности, а 0,5 ставки по аналогичной или иной должности, то записей должно быть две. В каждой строке - один и тот же номер СНИЛС, но своя информация по каждой занимаемой должности</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element ref="УТ2:ФИО">
+																	<xs:annotation>
+																		<xs:documentation>Фамилия, Имя и Отчество (при наличии) работника. Заполняются полностью, без сокращений, кириллицей</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element ref="УТ2:СНИЛС">
+																	<xs:annotation>
+																		<xs:documentation>Страховой номер индивидуального лицевого счета работника</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="ОбщийСтаж" type="xs:nonNegativeInteger">
+																	<xs:annotation>
+																		<xs:documentation>Общий трудовой стаж, полных лет</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="СЗПД" maxOccurs="unbounded">
+																	<xs:annotation>
+																		<xs:documentation>Сведения о заработной плате работника по должности. Заполняется для каждой должности работника отдельно</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="Должность" type="УТ2:ТипНепустаяСтрока">
+																				<xs:annotation>
+																					<xs:documentation>Полное наименование должности, занимаемой работником </xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="ККП">
+																				<xs:annotation>
+																					<xs:documentation>Код категории персонала. указывается трехзначный цифровой код, присвоенный должности из справочника, используемого для подведения итогов федерального статистического наблюдения в сфере оплаты труда отдельных категорий работников социальной сферы и науки (в соответствии с приказом Федеральной службы государственной статистики от 24 июля 2020 г. N 412 "Об утверждении форм федерального статистического наблюдения для организации федерального статистического наблюдения за численностью, условиями и оплатой труда работников, потребностью организаций в работниках по профессиональным группам"). В случае, если должности присвоен код категории, отсутствующий в перечне допустимых значений, а также если отчитывающаяся организация не заполняет формы статистического наблюдения «ЗП», то в данной графе указывается код "600". См. "Справочник кодов категории персонала"</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:length value="3"/>
+																						<xs:pattern value="\d{3}"/>
+																						<xs:enumeration value="201"/>
+																						<xs:enumeration value="221"/>
+																						<xs:enumeration value="291"/>
+																						<xs:enumeration value="211"/>
+																						<xs:enumeration value="232"/>
+																						<xs:enumeration value="233"/>
+																						<xs:enumeration value="242"/>
+																						<xs:enumeration value="243"/>
+																						<xs:enumeration value="261"/>
+																						<xs:enumeration value="401"/>
+																						<xs:enumeration value="431"/>
+																						<xs:enumeration value="411"/>
+																						<xs:enumeration value="421"/>
+																						<xs:enumeration value="501"/>
+																						<xs:enumeration value="311"/>
+																						<xs:enumeration value="281"/>
+																						<xs:enumeration value="100"/>
+																						<xs:enumeration value="600"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="УсловиеЗанятости">
+																				<xs:annotation>
+																					<xs:documentation>Условие занятости работника по каждой занимаемой им должности. Возможные значения:
+																						1 - "Основное";
+																						2 - "Внешнее совместительство";
+																						3 - "Внутреннее совместительство"</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:integer">
+																						<xs:enumeration value="1"/>
+																						<xs:enumeration value="2"/>
+																						<xs:enumeration value="3"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="Ставка">
+																				<xs:annotation>
+																					<xs:documentation>Ставка. Указывается количество занятых работником штатных единиц по должности</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:fractionDigits value="3"/>
+																						<xs:minExclusive value="0"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="РабВремяНорма">
+																				<xs:annotation>
+																					<xs:documentation>Количество рабочих часов по графику в отчетном месяце, часов. Указывается, исходя из установленной для работника продолжительности рабочего времени пропорционально занимаемой ставке по условиям трудового договора.</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:fractionDigits value="2"/>
+																						<xs:minInclusive value="0.00"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="РабВремяФакт">
+																				<xs:annotation>
+																					<xs:documentation>Фактически отработанное время в отчетном месяце, часов. Указывается по каждой занимаемой им должности в данном месяце согласно табелю учета рабочего времени. При отсутствии отработанного времени у работника на протяжении всего месяца указывается значение "0.00"</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:fractionDigits value="2"/>
+																						<xs:minInclusive value="0.00"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="НачисленияТариф" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начислений по тарифным ставкам, должностным окладам, сдельным расценкам или в процентах от выручки в соответствии с принятыми у налогоплательщика формами и системами оплаты труда, руб</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="ОУТ" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Класс (подкласс) условий труда по степени вредности и (или) опасности по итогам проведения специальной оценки условий труда в соответствии со статьей 14 Федерального закона №426-ФЗ от 28.12.2013 "О специальной оценке условий труда". Формат данных - либо одна цифра (в случае, если рабочему месту присвоен 1, 2 или 4 класс условий труда), либо две цифры, разделенные точкой (в случае, если рабочему месту присвоен 3 класс и соответствующий подкласс вредности).	Шаблон "X", "X.X". Не указывается, если информация о присвоенном классе (подклассе) условий труда у лица, заполняющего форму, по каким-либо причинам отсутствует</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:pattern value="\d(\.\d)?"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="НачисленияОУТ" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начислений работникам, занятым на работах с вредными и (или) опасными условиями труда, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="ДоплатаСовмещение" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Доплата (надбавка) за совмещение профессий (должностей), расширение зон обслуживания, увеличение объема работы или исполнение обязанностей временно отсутствующего работника без освобождения от работы, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="НачисленияИныеФед" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начислений по иным компенсационным выплатам, установленным в соответствии с ТК РФ, иными федеральными нормативными правовыми актами (далее – НПА), кроме выплат по районному регулированию, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="НачисленияИныеРег" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начислений по иным компенсационным выплатам, установленным в соответствии с региональным законодательством, локальным нормативным актом организаций (далее – ЛНА), руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="НачисленияПремии" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начислений в отчетном месяце по премиям и иным поощрительным выплатам за результаты работы, в том числе премии за производственные результаты (результаты работы), надбавки к тарифным ставкам и окладам за профессиональное мастерство, высокие достижения в труде и иные подобные показатели, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="НепрерывныйСтаж">
+																				<xs:annotation>
+																					<xs:documentation>Стаж работы, являющийся основанием для определения размера начислений по доплате (надбавке) за стаж работы, XX лет XX мес. Указывается в формате "ГГ.ММ" - четыре цифры, разделенные точкой по две (если количество лет/месяцев менее 10, то первая цифра 0. Пример: если стаж для определения доплаты составляет 11 лет и 6 месяцев, то значение будет таковым: "11.06". Если доплата (надбавка) за непрерывный стаж в организации не применяется, то необходимо указать общий стаж работы по должности в организации. В случае если информация о стаже работы в системе бухгалтерского учета отсутствует, необходимо указать значение "н/д". В случае если стаж работы меньше месяца, необходимо указать значение 00.00</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:pattern value="\d{2}\.0\d"/>
+																						<xs:pattern value="\d{2}\.1[0-1]"/>
+																						<xs:pattern value="н/д"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="ДоплатаСтаж" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начисленной доплаты (надбавки) за стаж работы (за стаж непрерывной работы/за выслугу лет) работнику в отчетном месяце в соответствии локальными нормативными актами, трудовыми договорами, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="ДоплатаСМ" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начисленной доплаты (надбавки) в отчетном месяце за работу в сельской местности и районах, приравниваемых к ней, в соответствии с локальными нормативными актами, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="КвалКатегория" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Квалификационная категория работника по должности, используемая для определения размера доплаты/надбавки за наличие квалификационной категории. Возможные значения: 
+																						1 - "первая";
+																						2 - "вторая";
+																						3 - "высшая"</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:integer">
+																						<xs:enumeration value="1"/>
+																						<xs:enumeration value="2"/>
+																						<xs:enumeration value="3"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="ДоплатаКвалКат" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начисленной доплаты (надбавки) работнику в отчетном месяце за наличие квалификационной категории, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="УченаяСтепень" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Ученая степень работника. Возможные значения: 
+																						1 - "кандидат наук";
+																						2 - "доктор наук"</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:integer">
+																						<xs:enumeration value="1"/>
+																						<xs:enumeration value="2"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="ДоплатаУС" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начисленной доплаты (надбавки) работнику в отчетном месяце за наличие ученой степени, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="ДоплатаНаставничество" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начисленной доплаты (надбавки) работнику в отчетном месяце за наставничество, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="ДоплатаМолодСпец" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начисленной доплаты (надбавки) молодым специалистам, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="ВыплатыИныеСтимул" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма иных начисленных стимулирующих выплат за отчетный месяц (по соответствующей должности, ставке, условиям занятости), руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="ВыплатыПрочие" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начисленных прочих выплат за отчетный месяц, отнесенных на фонд заработной платы, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="ВыплатыКомпенс" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Сумма начисленных компенсационных выплат по районному регулированию, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="НачисленияИтого" type="УТ2:ТипДеньги" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Итого сумма начисленной заработной платы работнику (по каждой должности) за отчетный месяц, руб.</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ФондЗП">
+								<xs:annotation>
+									<xs:documentation>Раздел 2 Формы «Сведения о фонде заработной платы» </xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Период" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Блок сведений по источникам финансирования фонда заработной платы за один календарный год</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Год" type="xs:gYear">
+														<xs:annotation>
+															<xs:documentation>Календарный год, за который выгружается отчет</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="РасхОбщФед" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Объем расходов ФЗП из федерального бюджета на всех работников, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="РасхКатФед" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Объем расходов ФЗП из федерального бюджета в т.ч. по "указным" категориям персонала, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="РасхОбщСуб" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Объем расходов ФЗП из бюджета субъекта Российской Федерации на всех работников, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="РасхКатСуб" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Объем расходов ФЗП из бюджета субъекта Российской Федерации в т.ч. по "указным" категориям персонала, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="РасхОбщМун" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Объем расходов ФЗП из муниципального бюджета на всех работников, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="РасхКатМун" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Объем расходов ФЗП из муниципального бюджета в т.ч. по "указным" категориям персонала, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="РасхОбщОМС" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Объем расходов ФЗП за счет средств ОМС на всех работников, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="РасхКатОМС" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Объем расходов ФЗП за счет средств ОМС в т.ч. по "указным" категориям персонала, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="РасхОбщИные" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Объем расходов ФЗП из иных источников на всех работников, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="РасхКатИные" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Объем расходов ФЗП из иных источников в т.ч. по "указным" категориям персонала, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="СЗПРук">
+								<xs:annotation>
+									<xs:documentation>Раздел 3 Формы «Сведения о заработной плате руководителей, заместителей руководителя и главного бухгалтера»</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Период" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Блок данных о сведениях по соотношениям заработной платы за один календарный год</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Год" type="xs:gYear">
+														<xs:annotation>
+															<xs:documentation>Календарный год, за который выгружается отчет</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="СредЗПРук" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Среднемесячная начисленная заработная плата руководителя организации, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="СредЗПЗам" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Среднемесячная начисленная заработная плата заместителей руководителя организации, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="СредЗПГлБух" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Среднемесячная начисленная заработная плата главного бухгалтера организации, руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="СредЗПРаб" type="УТ2:ТипДеньги" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Среднемесячная начисленная заработная плата работников организации (кроме руководителя, заместителей руководителей, главного бухгалтера), руб.</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="СлужебнаяИнформация" type="АФ5:ТипСлужебнаяИнформация">
+					<xs:annotation>
+						<xs:documentation>Служебная информация об электронном документе</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Signature"  xmlns="http://www.w3.org/2000/09/xmldsig#" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Электронная подпись (ЭП). Электронный документ, для которого законодательством Российской Федерации предусмотрена юридически значимая подпись, должен быть подписан усиленной квалифицированной электронной подписью в соответствии со спецификацией XMLDSig</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
